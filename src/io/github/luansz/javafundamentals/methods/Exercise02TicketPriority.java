@@ -3,11 +3,11 @@ package io.github.luansz.javafundamentals.methods;
 import java.util.Scanner;
 public class Exercise02TicketPriority {
     public static String calculatePriority(boolean systemUnavailable, int waitingTime){
-        if(systemUnavailable && time >= 20){
+        if(systemUnavailable && waitingTime >= 20){
             return "CRITICAL";
-        } else if(systemUnavailable || time >= 30){
+        } else if(systemUnavailable || waitingTime >= 30){
             return "HIGH";
-        } else if(time >= 10){
+        } else if(waitingTime >= 10){
             return "MEDIUM";
         } else {
             return "LOW";
