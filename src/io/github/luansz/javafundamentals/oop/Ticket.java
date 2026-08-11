@@ -8,7 +8,7 @@ public class Ticket {
     private boolean isSystemUnavailable;
     private Priority priority;
     private int sla;
-    private String slaStatus;
+    private SlaStatus slaStatus;
 
     //constructor
     public Ticket(Requester requester, String ticketTitle, int waitingTime, boolean isSystemUnavailable) {
@@ -71,9 +71,9 @@ public class Ticket {
 
     private void calculateSlaStatus() {
         if (resolution.getResolutionTime() <= sla) {
-            slaStatus = "WITHIN SLA";
+            this.slaStatus = SlaStatus.WITHIN_SLA;
         } else {
-            slaStatus = "SLA BREACHED";
+            this.slaStatus = SlaStatus.SLA_BREACHED;
         }
     }
 
@@ -134,7 +134,7 @@ public class Ticket {
         return sla;
     }
 
-    public String getSlaStatus() {
+    public SlaStatus getSlaStatus() {
         return slaStatus;
     }
 
