@@ -4,14 +4,14 @@ public class Ticket {
     private String ticketTitle;
     private Requester requester;
     private int waitingTime;
-    private int resolutionTime;
+    private Resolution resolution;
     private boolean isSystemUnavailable;
-    private String priority;
+    private Priority priority;
     private int sla;
     private String slaStatus;
 
     //constructor
-    public Ticket(Requester requester, String ticketTitle, int waitingTime, int resolutionTime, boolean isSystemUnavailable) {
+    public Ticket(Requester requester, String ticketTitle, int waitingTime, boolean isSystemUnavailable) {
         if (requester == null) {
             throw new IllegalArgumentException("Requester must be placed");
         } else {
@@ -19,7 +19,6 @@ public class Ticket {
         }
         this.setTicketTitle(ticketTitle);
         this.setWaitingTime(waitingTime);
-        this.setResolutionTime(resolutionTime);
         this.setSystemUnavailable(isSystemUnavailable);
     }
 
@@ -34,31 +33,36 @@ public class Ticket {
 
         System.out.println("Ticket Title: " + ticketTitle);
         System.out.println("Waiting time: " + waitingTime);
-        System.out.println("Resolution time: " + resolutionTime);
         System.out.println("System Unavailable: " + isSystemUnavailable);
-        System.out.println("Priority:" + priority);
+        System.out.println("Priority: " + priority);
         System.out.println("SLA: " + sla);
-        System.out.println("SLA Status: " + slaStatus);
+        if (resolution == null) {
+            System.out.println("Resolution Status: NOT RESOLVED");
+        } else {
+            System.out.println("Resolution time: " + resolution.getResolutionTime());
+            System.out.println("Resolved by: " + resolution.getResolvedBy());
+            System.out.println("SLA Status: " + slaStatus);
+        }
     }
 
     private void calculatePriority() {
         if (isSystemUnavailable && waitingTime >= 20) {
-            priority = "CRITICAL";
+            this.priority = Priority.CRITICAL;
         } else if (isSystemUnavailable || waitingTime >= 30) {
-            priority = "HIGH";
+            this.priority = Priority.HIGH;
         } else if (waitingTime >= 10) {
-            priority = "MEDIUM";
+            this.priority = Priority.MEDIUM;
         } else {
-            priority = "LOW";
+            this.priority = Priority.LOW;
         }
     }
 
     private void calculateSla() {
-        if (priority.equals("CRITICAL")) {
+        if (priority == Priority.CRITICAL) {
             sla = 15;
-        } else if (priority.equals("HIGH")) {
+        } else if (priority == Priority.HIGH) {
             sla = 30;
-        } else if (priority.equals("MEDIUM")) {
+        } else if (priority == Priority.MEDIUM) {
             sla = 120;
         } else {
             sla = 480;
@@ -66,11 +70,16 @@ public class Ticket {
     }
 
     private void calculateSlaStatus() {
-        if (resolutionTime <= sla) {
+        if (resolution.getResolutionTime() <= sla) {
             slaStatus = "WITHIN SLA";
         } else {
             slaStatus = "SLA BREACHED";
         }
+    }
+
+    public void resolve(int resolutionTime, String resolvedBy) {
+        resolution = new Resolution(resolutionTime, resolvedBy);
+        this.calculateSlaStatus();
     }
 
     //specials
@@ -91,26 +100,15 @@ public class Ticket {
     }
 
     public void setWaitingTime(int waitingTime) {
-        if (waitingTime <=0){
+        if (waitingTime <= 0) {
             throw new IllegalArgumentException("Waiting time must be greater than zero");
-        } else{
+        } else {
             this.waitingTime = waitingTime;
             this.calculatePriority();
             this.calculateSla();
-            this.calculateSlaStatus();
-        }
-    }
-
-    public int getResolutionTime() {
-        return resolutionTime;
-    }
-
-    public void setResolutionTime(int resolutionTime) {
-        if (resolutionTime <=0){
-            throw new IllegalArgumentException("Resolution time must be greater than zero");
-        } else{
-            this.resolutionTime = resolutionTime;
-            this.calculateSlaStatus();
+            if (resolution != null){
+                this.calculateSlaStatus();
+            }
         }
     }
 
@@ -122,10 +120,12 @@ public class Ticket {
         isSystemUnavailable = systemUnavailable;
         this.calculatePriority();
         this.calculateSla();
-        this.calculateSlaStatus();
+        if (resolution != null){
+            this.calculateSlaStatus();
+        }
     }
 
-    public String getPriority() {
+    public Priority getPriority() {
         return priority;
     }
 
