@@ -7,7 +7,6 @@ public class Ticket {
     private Resolution resolution;
     private boolean isSystemUnavailable;
     private Priority priority;
-    private int sla;
     private SlaStatus slaStatus;
 
     //constructor
@@ -35,7 +34,7 @@ public class Ticket {
         System.out.println("Waiting time: " + waitingTime);
         System.out.println("System Unavailable: " + isSystemUnavailable);
         System.out.println("Priority: " + priority);
-        System.out.println("SLA: " + sla);
+        System.out.println("SLA: " + priority.getSlaMinutes());
         if (resolution == null) {
             System.out.println("Resolution Status: NOT RESOLVED");
         } else {
@@ -57,20 +56,9 @@ public class Ticket {
         }
     }
 
-    private void calculateSla() {
-        if (priority == Priority.CRITICAL) {
-            sla = 15;
-        } else if (priority == Priority.HIGH) {
-            sla = 30;
-        } else if (priority == Priority.MEDIUM) {
-            sla = 120;
-        } else {
-            sla = 480;
-        }
-    }
 
     private void calculateSlaStatus() {
-        if (resolution.getResolutionTime() <= sla) {
+        if (resolution.getResolutionTime() <= this.priority.getSlaMinutes()) {
             this.slaStatus = SlaStatus.WITHIN_SLA;
         } else {
             this.slaStatus = SlaStatus.SLA_BREACHED;
@@ -105,7 +93,6 @@ public class Ticket {
         } else {
             this.waitingTime = waitingTime;
             this.calculatePriority();
-            this.calculateSla();
             if (resolution != null){
                 this.calculateSlaStatus();
             }
@@ -119,7 +106,6 @@ public class Ticket {
     public void setSystemUnavailable(boolean systemUnavailable) {
         isSystemUnavailable = systemUnavailable;
         this.calculatePriority();
-        this.calculateSla();
         if (resolution != null){
             this.calculateSlaStatus();
         }
@@ -127,11 +113,6 @@ public class Ticket {
 
     public Priority getPriority() {
         return priority;
-    }
-
-
-    public int getSla() {
-        return sla;
     }
 
     public SlaStatus getSlaStatus() {

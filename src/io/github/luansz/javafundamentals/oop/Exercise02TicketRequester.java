@@ -2,7 +2,7 @@ package io.github.luansz.javafundamentals.oop;
 
 public class Exercise02TicketRequester {
     public static void main(String[] args) {
-
+        /*
         Requester requester1 = new Requester("Ana Souza", "ana@company.com", 456);
         Ticket ticket1 = new Ticket(requester1, "Login unavailable", 25, 10, true);
 
@@ -16,5 +16,7 @@ public class Exercise02TicketRequester {
 
         Ticket ticket3 = new Ticket(requester1, "Application bug", 40, 25, true);
         ticket3.showSummary();
+
+         */
     }
 }
